@@ -11,7 +11,7 @@ export default function App() {
 	const [allGMs, setAllGMs] = useState([]);
 	const [message, setMessage] = useState("");
 
-	const contractAddress = "0x72ECed7EB3a9ccfAAeB436431d6D513053E3e698";
+	const contractAddress = "0x7561A79ad2fDd3026D54d00da595A1395E500E3c";
 	const contractABI = abi.abi;
   
 	const checkIfWalletIsConnected = async () => {
@@ -51,8 +51,8 @@ export default function App() {
 
 			const accounts = await ethereum.request({method: "eth_requestAccounts"});
 			console.log("Connected", accounts[0]);
-
 			setCurrentAccount(accounts[0]);
+			getAllGMs();
 		} catch (error){
 			console.log(error);
 		}
