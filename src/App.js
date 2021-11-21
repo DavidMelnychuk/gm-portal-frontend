@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import './App.css';
 import abi from './utils/GMPortal.json';
+import moment from 'moment';
 
+/* global BigInt */
 export default function App() {
 
   const [currentAccount, setCurrentAccount] = useState("");
@@ -102,16 +104,14 @@ export default function App() {
 				const gmPortalContract = new ethers.Contract(contractAddress, contractABI, signer);
 
 				const gms = await gmPortalContract.getAllGMs();
-        
-        console.log(gms);
-				const gmsCleaned = gms.map(gm => {
+        const gmsCleaned = gms.map(gm => {
 					return {
 						address: truncateAddress(gm.user),
 						timestamp: new Date(gm.timestamp * 1000),
 						message: gm.message
 					};
 				})
-
+        gmsCleaned.sort((a, b) => b.timestamp - a.timestamp);
 				setAllGMs(gmsCleaned);
 			} else {
 				console.log("Ethereum object doesn't exist!");
@@ -128,12 +128,12 @@ export default function App() {
 		const onNewGm = (from, timestamp, message) => {
 			console.log('NewGm', from, timestamp, message);
 			setAllGMs(prevState => [
-				...prevState,
-				{
+        {
 					address: truncateAddress(from),
 					timestamp: new Date(timestamp * 1000).toUTCString(),
 					message: message,
 				},
+				...prevState,
 			]);
 		};
 
@@ -156,7 +156,6 @@ export default function App() {
 		return `${s.substring(0, 6)}...${s.substring(38, s.length)}`
 	}
   
-	// TODO: Progress bar / Spinner while mining;
 	// TODO: Fix table CSS 
   return (
     <div className="mainContainer">
@@ -203,7 +202,7 @@ export default function App() {
 						<tr>
 							<th > Sender</th>
 							<th > Message</th>
-							<th > Received</th>
+							<th > Sent</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -211,8 +210,8 @@ export default function App() {
 						return (
 							<tr key={index} className="gmTable__Tr">
 								<td className="gmTable__sender">{gm.address}</td>
-								<td>{gm.message}</td>
-								<td>{gm.timestamp.toString()}</td>
+								<td className="gmTable__msg">{gm.message}</td>
+								<td className="gmTable__sent">{moment(gm.timestamp).fromNow()}</td>
 							</tr>
 							)
 						})}

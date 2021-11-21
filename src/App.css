@@ -169,8 +169,8 @@ th {
 }
 
 td {
-	font-weight: 600;
-	padding: 4px 0px 4px 0px;
+	font-weight: 800;
+	padding: 8px 0px 4px 0px;
 }
 
 tr {
@@ -178,7 +178,11 @@ tr {
 }
 
 .gmTable__sender {
-	width: 250px;
+	width: 150px;
+}
+
+.gmTable__sent {
+  width: 150px;
 }
 
 @media (min-width: 768px) {
