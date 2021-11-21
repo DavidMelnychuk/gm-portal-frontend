@@ -76,7 +76,7 @@ export default function App() {
 				const gmTxn = await gmPortalContract.gm(message, { gasLimit: 900000 });
 				setTransactionMining(true);
 				console.log("Mining....", gmTxn.hash);
-        
+
 				await gmTxn.wait();
 				console.log("Mined ---", gmTxn.hash);
 				setTransactionMining(false);
@@ -183,8 +183,16 @@ export default function App() {
 						</button>
 					) 
 					: (  
-							<button className="gmButton" onClick={gm}>
-								gm ☕
+							<button className="gmButton" onClick={gm} disabled={transactionMining}>
+								
+                {transactionMining && (
+                  <i
+                    className="fa fa-circle-o-notch fa-spin"
+                    style={{ marginRight: "5px" }}
+                  />
+                )}
+                {transactionMining && <span>good morning ☀️</span>}
+                {!transactionMining && <span>gm ⛅</span>}
 							</button>
 						) 
 				}
