@@ -4,7 +4,6 @@ import './App.css';
 import abi from './utils/GMPortal.json';
 import moment from 'moment';
 
-/* global BigInt */
 export default function App() {
 
   const [currentAccount, setCurrentAccount] = useState("");
@@ -71,16 +70,12 @@ export default function App() {
 				const provider = new ethers.providers.Web3Provider(ethereum);
 				const signer = provider.getSigner();
 				const gmPortalContract = new ethers.Contract(contractAddress, contractABI, signer);
-
 				let count = await gmPortalContract.getTotalGMs();
-				console.log("Retrieved total gm count...", count.toNumber());
 
 				const gmTxn = await gmPortalContract.gm(message, { gasLimit: 900000 });
 				setTransactionMining(true);
-				console.log("Mining....", gmTxn.hash);
 
 				await gmTxn.wait();
-				console.log("Mined ---", gmTxn.hash);
 				setTransactionMining(false);
 
 
@@ -172,9 +167,6 @@ export default function App() {
 					<h2> Connect your Ethereum wallet and say gm! :)</h2>
         </div>
 
-					<textarea maxLength="140" rows="3" value={message} placeholder="Your message 😎" onInput={e => setMessage(e.target.value)}/>
-					<span>{message.length} / 140</span>
-
 				{!currentAccount ? 
 					(
 						<button className="gmButton" onClick={connectWallet}>
@@ -182,7 +174,11 @@ export default function App() {
 						</button>
 					) 
 					: (  
-							<button className="gmButton" onClick={gm} disabled={transactionMining}>
+            <>
+              <textarea maxLength="140" rows="3" value={message} placeholder="Your message 😎" onChange={e => setMessage(e.target.value)}/>
+					    <span>{message.length} / 140</span>
+
+              <button className="gmButton" onClick={gm} disabled={transactionMining}>
 								
                 {transactionMining && (
                   <i
@@ -193,31 +189,30 @@ export default function App() {
                 {transactionMining && <span>good morning ☀️</span>}
                 {!transactionMining && <span>gm ⛅</span>}
 							</button>
+              <h2> {allGMs.length} GMs on the blockchain 👇</h2>
+                  <table className="gmTable">
+                    <thead>
+                      <tr>
+                        <th > Sender</th>
+                        <th > Message</th>
+                        <th > Sent</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allGMs.map((gm, index) => {
+                      return (
+                        <tr key={index} className="gmTable__Tr">
+                          <td className="gmTable__sender">{gm.address}</td>
+                          <td className="gmTable__msg">{gm.message}</td>
+                          <td className="gmTable__sent">{moment(gm.timestamp).fromNow()}</td>
+                        </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+            </>
 						) 
 				}
-
-				<h2> {allGMs.length} GMs on the blockchain 👇</h2>
-				<table className="gmTable">
-					<thead>
-						<tr>
-							<th > Sender</th>
-							<th > Message</th>
-							<th > Sent</th>
-						</tr>
-					</thead>
-					<tbody>
-						{allGMs.map((gm, index) => {
-						return (
-							<tr key={index} className="gmTable__Tr">
-								<td className="gmTable__sender">{gm.address}</td>
-								<td className="gmTable__msg">{gm.message}</td>
-								<td className="gmTable__sent">{moment(gm.timestamp).fromNow()}</td>
-							</tr>
-							)
-						})}
-					</tbody>
-				</table>
-
       </div>
     </div>
   );
